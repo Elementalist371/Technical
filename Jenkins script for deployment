@@ -1,0 +1,16 @@
+#!/bin/bash
+$DOCKER_HUB_REPO = 'sgreyling'
+$DOCKER_IMAGE_NAME_WEBMVC = 'eshopwebmvc'
+$DOCKER_IMAGE_NAME_PUBLICAPI = 'eshoppublicapi'
+$WORKSPACE_PATH = "$workspace/src"
+$DOCKER_TAG = 'latest'  
+
+# Build Docker Images
+docker build  -t "${DOCKER_HUB_REPO}/${DOCKER_IMAGE_NAME_WEBMVC}:${DOCKER_TAG}" -f src/Web/Dockerfile .
+docker build  -t "${DOCKER_HUB_REPO}/${DOCKER_IMAGE_NAME_PUBLICAPI}:${DOCKER_TAG}" -f src/PublicApi/Dockerfile .
+
+# Apply Kubernetes YAML Files
+kubectl apply -f sqlserver-service.yaml
+kubectl apply -f eshoppublicapi-deployment.yaml
+kubectl apply -f eshopwebmvc-deployment.yaml
+kubectl apply -f sqlserver-deployment.yaml
